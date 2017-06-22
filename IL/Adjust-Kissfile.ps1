@@ -4,6 +4,7 @@ param
     [string]$outputPath="$PSScriptRoot\output\"
 ) 
 
+
 function Release-Ref ($ref) { 
     
     ([System.Runtime.InteropServices.Marshal]::ReleaseComObject([System.__ComObject]$ref) -gt 0) | Out-Null
@@ -23,32 +24,17 @@ function MakeCellValuePositive ($worksheet, $rowIndex, $cellIndex) {
     }
 } 
 
-$filesToProcess = Get-ChildItem $inputPath -Filter *.xls
-$numberOfnewFiles = $filesToProcess.Count
-
-Write-Host $numberOfnewFiles "neue Datei(en) zur gefunden."
-
-If ($numberOfnewFiles -eq 0) 
+function ProcessFile($file)
 {
-    Write-Host "Beende Verarbeitung." 
-}
-else
-{
-    Write-Host "Starte Verarbeitung"
-}
- 
-
-$filesToProcess | Foreach-Object {
-
-    try
+ try
     {
 
-        Write-Host "Verarbeite Datei:" $_.Name
+        Write-Host "Verarbeite Datei:" $file.Name
 
         # initialisieren der Zugriffsobjekte
         $excel = New-Object -ComObject Excel.Application
         $excel.visible = $false           
-        $workbook = $excel.workbooks.open($_.FullName)
+        $workbook = $excel.workbooks.open($file.FullName)
         $worksheets = $workbooks.worksheets
         $worksheet = $workbook.worksheets.Item(1)
 
@@ -102,6 +88,32 @@ $filesToProcess | Foreach-Object {
         Release-Ref($excel)
       }    
 
-    Move-Item $_.FullName $outputPath
-    Write-Host "Verarbeitung abgeschlossen"
+    Move-Item $file.FullName $outputPath
+    Write-Host "Datei verarbeitet"
 }
+
+# ------------------------------------------------
+#Skript - Main
+# ------------------------------------------------
+
+$filesToProcess = Get-ChildItem $inputPath -Filter *.xls
+$numberOfnewFiles = $filesToProcess.Count
+
+Write-Host $numberOfnewFiles "neue Datei(en) zur gefunden."
+
+If ($numberOfnewFiles -eq 0) 
+{
+    Write-Host "Beende Verarbeitung." 
+}
+else
+{
+    Write-Host "Starte Verarbeitung"
+}
+ 
+
+$filesToProcess | Foreach-Object {
+  ProcessFile($_)
+}
+    
+Write-Host "Verarbeitung abgeschlossen"
+
