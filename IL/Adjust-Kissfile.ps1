@@ -38,7 +38,7 @@ function ProcessFile($file)
         $worksheets = $workbooks.worksheets
         $worksheet = $workbook.worksheets.Item(1)
 
-        # Finde die letzte genutzt Zeile lieber nicht über RowsUsed, weil das anfällig für manuelle Editierungen im Excel ist
+        # Finde die letzte genutzt Zeile lieber nicht Ã¼ber RowsUsed, weil das anfÃ¤llig fÃ¼r manuelle Editierungen im Excel ist
         $lastRowUsed = $worksheet.Range("A2500:A3000").find("Kontrollsumme:").Row       
 
         # Einlesen der Matrix aus Excel als Range, um viele COM interop Zugriffe zu vermeiden
@@ -61,20 +61,20 @@ function ProcessFile($file)
         $worksheet.Cells.Item(4,4).Value = "11XENVIAMBILANZD"
         $worksheet.Cells.Item(5,4).Value = "11XVE-TRADING--X"
 
-        $worksheet.Cells.Item(11,4).Formula = "=MAX(D21:D$lastRowofTimeSlices)"
-        $worksheet.Cells.Item(11,6).Formula = "=MAX(D21:D$lastRowofTimeSlices)"
+        $worksheet.Cells.Item(11,4).Value2 *= -1
+        $worksheet.Cells.Item(11,6).Value2 *= -1
 
-        $worksheet.Cells.Item(12,4).Formula = "=SUM(D21:D$lastRowofTimeSlices)/4"        
-        $worksheet.Cells.Item(12,6).Formula = "=SUM(D21:D$lastRowofTimeSlices)/4"
+        $worksheet.Cells.Item(12,4).Value2 *= -1
+        $worksheet.Cells.Item(12,6).Value2 *= -1
 
-        $worksheet.Cells.Item(15,4).Formula = "=SUM(D21:D$lastRowofTimeSlices) /4"
-        $worksheet.Cells.Item(15,6).Formula = "=SUM(D21:D$lastRowofTimeSlices) /4"
-
-        $worksheet.Cells.Item($lastRowUsed, 4).Formula = "=SUM(D21:D$lastRowofTimeSlices) /4"
-        $worksheet.Cells.Item($lastRowUsed, 6).Formula = "=SUM(D21:D$lastRowofTimeSlices) /4"
+        $worksheet.Cells.Item(15,4).Value2 *= -1
+        $worksheet.Cells.Item(15,6).Value2 *= -1
         
-        $worksheet.Cells.Item(11,2).Formula = "=MAX(C11:F11)"        
-        $worksheet.Cells.Item(12,2).Formula = "=MAX(C12:F12)"
+        $worksheet.Cells.Item($lastRowUsed,4).Value2 *= -1
+        $worksheet.Cells.Item($lastRowUsed,6).Value2 *= -1
+                        
+        $worksheet.Cells.Item(11,2).Value2 *= -1
+        $worksheet.Cells.Item(12,2).Value2 *= -1
 
         $workbook.Save()
     
